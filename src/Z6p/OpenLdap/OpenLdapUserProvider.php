@@ -125,15 +125,15 @@ class OpenLdapUserProvider implements UserProviderInterface {
 		
 		if($this->config['user_attributes'] == '*') {
 			foreach( $entry as $key => $value ) {
-				$parameters[$value] = $entry[$key];
+				$parameters[$key] = $value;
 			}
 		} else {
 			
 			foreach( $this->config['user_attributes'] as $key => $value ) {
-				if(is_array( $entry[$key] ))
-					$parameters[$value] = $entry[$key][0];
+				if(is_array( $value ))
+					$parameters[$value] = $value[0];
 				else
-					$parameters[$value] = $entry[$key];
+					$parameters[$value] = $value;
 			}
 		}
 		
