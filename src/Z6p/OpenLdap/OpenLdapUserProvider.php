@@ -58,8 +58,6 @@ class OpenLdapUserProvider implements UserProviderInterface {
 
 	public function retrieveByID($identifier) {
 		
-		file_put_contents( '/tmp/debug.txt', 'Identifier '.json_encode( $identifier ) . PHP_EOL );
-		
 		$filter = $this->config['filter'];
 		if(strpos( $filter, '&' ))
 			$filter = substr_replace( $filter, '(' . $this->config['user_id_attribute'] . '=' . $identifier . ')', 
@@ -74,26 +72,25 @@ class OpenLdapUserProvider implements UserProviderInterface {
 		$entries = ldap_get_entries( $this->conn, $result );
 		if($entries['count'] == 0 || $entries['count'] > 1) return null;
 		
-		if($this->config['use_db']) {
-			$ldap_value = $entries[0][$this->config['ldap_field']][0];
-			$user = $this->db_conn->table( $this->config['db_table'] )->where( $this->config['db_field'], '=', $ldap_value )->first();
-			
-			if($this->config['eloquent'])
-				$this->model = $this->createModel()->newQuery()->find( $user->id );
-			else
-				$this->model = new GenericUser( get_object_vars( $user ) );
-		} else {
-			$this->model = $this->createGenericUserFromLdap( $entries[0] );
-		}
+		$this->model = $this->createGenericUserFromLdap( $entries[0] );
 		
 		return $this->model;
 	}
 
 	public function retrieveByCredentials(array $credentials) {
-		file_put_contents( '/tmp/debug.txt', 'Credentials: '.json_encode( $credentials ) . PHP_EOL );
+		
+		$filter = array();
+		foreach($credentials as $key=>$value) {
+			if($key !== 'password') {
+				$filter[] = '('.$key.'='.$value.')';
+			}
+		}
+		if(count($filter) > 0) {
+			$filter = '(&'.implode('', $filter).')';
+		}
 		
 		$result = @ldap_search( $this->conn, 
-				$this->config['login_attribute'] . '=' . $credentials['username'] . ',' . $this->config['basedn'], 
+				$this->config['basedn'], 
 				$this->config['filter'] );
 		if($result == false) return null;
 		
