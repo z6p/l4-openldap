@@ -1,4 +1,4 @@
-# l4-openldap
+# laravel4-openldap
 
 An OpenLDAP authentication driver for Laravel 4.
 
@@ -8,7 +8,7 @@ Add the following to your `composer.json` file.
 
 ```
 require {
-	"ymo/l4-openldap": "dev-master"
+	"z6p/laravel4-openldap": "dev-master"
 }
 ```
 
@@ -16,7 +16,7 @@ Run `composer update`.
 
 Open `app/config/app.php` and add:
 
-`Ymo\L4OpenLdap\L4OpenLdapServiceProvider`
+`Z6p\OpenLdap\OpenLdapServiceProvider`
 
 Open `app/config/auth.php` and change the authentication driver to `ldap`.
 
@@ -26,7 +26,7 @@ Add this to `app/config/auth.php`.
 
 ```php
 /**
- * LDAP Configuration for ymo/l4-openldap
+ * LDAP Configuration for z6p/laravel4-openldap
  */
 'ldap' => array(
 	'host' => 'ldap.example.com',
