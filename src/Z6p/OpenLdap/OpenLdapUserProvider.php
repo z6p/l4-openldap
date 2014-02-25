@@ -32,14 +32,20 @@ class OpenLdapUserProvider implements UserProviderInterface {
 		ldap_set_option( $this->conn, LDAP_OPT_PROTOCOL_VERSION, $this->config['version'] );
 		ldap_set_option( $this->conn, LDAP_OPT_REFERRALS, 0 );
 		
+		if($this->config['use_tls']) {
+			if(!@ldap_start_tls()) {
+				throw new \Exception( 'Could not use TLS: ' . ldap_error( $this->conn ) );
+			}
+		}
+		
 		if($this->config['username'] && $this->config['password'] && $this->config['rdn']) {
 			if(!@ldap_bind( $this->conn, 'cn=' . $this->config['username'] . ',' . $this->config['rdn'], 
 					$this->config['password'] )) {
-				throw new \Exception( 'Could not bind to AD: ' . ldap_error( $this->conn ) );
+				throw new \Exception( 'Could not bind to LDAP: ' . ldap_error( $this->conn ) );
 			}
 		} else {
 			if(!@ldap_bind( $this->conn )) {
-				throw new \Exception( 'Could not bind to AD: ' . ldap_error( $this->conn ) );
+				throw new \Exception( 'Could not bind to LDAP: ' . ldap_error( $this->conn ) );
 			}
 		}
 	}
