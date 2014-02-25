@@ -47,10 +47,10 @@ Add this to `app/config/auth.php`.
 	'filter' => '(&(objectclass=posixAccount)(|(status=member)))', // optional
 
 	'login_attribute' => 'uid', // login attributes for users
-	'basedn' => 'ou=people,dc=example,dc=com', // basedn for users
-	'user_id_attribute' => 'uidNumber', // the attribute name containg the uid number
+	'basedn' => 'dc=is-preprod,dc=bimedia-it,dc=com', // basedn for users
+	'user_id_attribute' => 'dn', // the attribute name containg the uid number
 	'user_attributes' => array( // the ldap attributes you want to store in session (ldap_attr => array_field_name)
-		'uid' => 'username', // example: this stores the ldap uid attribute as username in GenericUser
+			'uid' => 'username', // example: this stores the ldap uid attribute as username in GenericUser
 	)
 ),
 ```
