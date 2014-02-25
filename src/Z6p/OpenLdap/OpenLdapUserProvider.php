@@ -1,6 +1,6 @@
 <?php
 
-namespace Ymo\L4OpenLdap;
+namespace Z6p\OpenLdap;
 
 use Illuminate\Auth\UserProviderInterface;
 use Illuminate\Auth\UserInterface;
@@ -8,12 +8,13 @@ use Illuminate\Auth\GenericUser;
 
 /**
  * An OpenLDAP authentication driver for Laravel 4.
- *
- * @author Yuri Moens (yuri.moens@gmail.com)
+ * 
+ * @author Sébastien Boucontet
+ * Original code from Yuri Moens (yuri.moens@gmail.com)
  *
  */
 
-class L4OpenLdapUserProvider implements UserProviderInterface {
+class OpenLdapUserProvider implements UserProviderInterface {
 
 	/**
 	 * The user model

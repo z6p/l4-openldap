@@ -1,17 +1,18 @@
 <?php
 
-namespace Ymo\L4OpenLdap;
+namespace Z6p\OpenLdap;
 
 use Illuminate\Auth\Guard;
 
 /**
  * An OpenLDAP authentication driver for Laravel 4.
- *
- * @author Yuri Moens (yuri.moens@gmail.com)
+ * 
+ * @author Sébastien Boucontet
+ * Original code from Yuri Moens (yuri.moens@gmail.com)
  *
  */
 
- class L4OpenLdapGuard extends Guard
+ class OpenLdapGuard extends Guard
  {
  	public function admin()
  	{

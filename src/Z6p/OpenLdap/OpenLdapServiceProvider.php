@@ -1,26 +1,27 @@
 <?php
 
-namespace Ymo\L4OpenLdap;
+namespace Z6p\OpenLdap;
 
 use Illuminate\Support\ServiceProvider;
 
 /**
  * An OpenLDAP authentication driver for Laravel 4.
  *
- * @author Yuri Moens (yuri.moens@gmail.com)
+ * @author Sébastien Boucontet
+ * Original code from Yuri Moens (yuri.moens@gmail.com)
  *
  */
 
-class L4OpenLdapServiceProvider extends ServiceProvider {
+class OpenLdapServiceProvider extends ServiceProvider {
 
 	public function boot()
 	{
-    	$this->package('ymo/l4-openldap');
+    	$this->package('z6p/laravel4-openldap');
 
         $this->app['auth']->extend('ldap', function($app)
         {
-        	return new L4OpenLdapGuard(
-            	new L4OpenLdapUserProvider(
+        	return new OpenLdapGuard(
+            	new OpenLdapUserProvider(
                     	$app['config']->get('auth.ldap'),
                     	$app['db']->connection()
                 	),
