@@ -96,7 +96,7 @@ class OpenLdapUserProvider implements UserProviderInterface {
 		
 		$entries = ldap_get_entries( $this->conn, $result );
 		if($entries['count'] == 0 || $entries['count'] > 1) return null;
-				
+		
 		$this->model = $this->createGenericUserFromLdap( $entries[0] );
 		
 		return $this->model;
@@ -123,11 +123,18 @@ class OpenLdapUserProvider implements UserProviderInterface {
 					'id' => $entry[$this->config['user_id_attribute']]
 			);
 		
-		foreach( $this->config['user_attributes'] as $key => $value ) {
-			if(is_array( $entry[$key] ))
-				$parameters[$value] = $entry[$key][0];
-			else
+		if($this->config['user_attributes'] == '*') {
+			foreach( $entry as $key => $value ) {
 				$parameters[$value] = $entry[$key];
+			}
+		} else {
+			
+			foreach( $this->config['user_attributes'] as $key => $value ) {
+				if(is_array( $entry[$key] ))
+					$parameters[$value] = $entry[$key][0];
+				else
+					$parameters[$value] = $entry[$key];
+			}
 		}
 		
 		return new GenericUser( $parameters );
