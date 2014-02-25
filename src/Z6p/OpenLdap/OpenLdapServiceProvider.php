@@ -18,8 +18,8 @@ class OpenLdapServiceProvider extends ServiceProvider {
 		
 		$this->app['auth']->extend( 'ldap', 
 				function ($app) {
-					return new OpenLdapGuard( 
-							new OpenLdapUserProvider( $app['config']->get( 'auth.ldap' ) ), $app->make( 'session.store' ) );
+					return new OpenLdapGuard( new OpenLdapUserProvider( $app['config']->get( 'auth.ldap' ) ), 
+							$app->make( 'session.store' ) );
 				} );
 	}
 

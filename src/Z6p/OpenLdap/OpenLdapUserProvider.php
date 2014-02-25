@@ -57,7 +57,6 @@ class OpenLdapUserProvider implements UserProviderInterface {
 	}
 
 	public function retrieveByID($identifier) {
-		
 		$filter = $this->config['filter'];
 		if(strpos( $filter, '&' ))
 			$filter = substr_replace( $filter, '(' . $this->config['user_id_attribute'] . '=' . $identifier . ')', 
@@ -78,20 +77,17 @@ class OpenLdapUserProvider implements UserProviderInterface {
 	}
 
 	public function retrieveByCredentials(array $credentials) {
-		
 		$filter = array();
-		foreach($credentials as $key=>$value) {
+		foreach( $credentials as $key => $value ) {
 			if($key !== 'password') {
-				$filter[] = '('.$key.'='.$value.')';
+				$filter[] = '(' . $key . '=' . $value . ')';
 			}
 		}
-		if(count($filter) > 0) {
-			$filter = '(&'.implode('', $filter).')';
+		if(count( $filter ) > 0) {
+			$filter = '(&' . implode( '', $filter ) . ')';
 		}
 		
-		$result = @ldap_search( $this->conn, 
-				$this->config['basedn'], 
-				$this->config['filter'] );
+		$result = @ldap_search( $this->conn, $this->config['basedn'], $this->config['filter'] );
 		if($result == false) return null;
 		
 		$entries = ldap_get_entries( $this->conn, $result );
