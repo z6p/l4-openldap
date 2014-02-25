@@ -33,7 +33,7 @@ class OpenLdapUserProvider implements UserProviderInterface {
 		ldap_set_option( $this->conn, LDAP_OPT_REFERRALS, 0 );
 		
 		if($this->config['use_tls']) {
-			if(!@ldap_start_tls()) {
+			if(!@ldap_start_tls($this->conn)) {
 				throw new \Exception( 'Could not use TLS: ' . ldap_error( $this->conn ) );
 			}
 		}
