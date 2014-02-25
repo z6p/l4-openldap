@@ -33,7 +33,7 @@ class OpenLdapUserProvider implements UserProviderInterface {
 		ldap_set_option( $this->conn, LDAP_OPT_REFERRALS, 0 );
 		
 		if($this->config['use_tls']) {
-			if(!@ldap_start_tls($this->conn)) {
+			if(!@ldap_start_tls( $this->conn )) {
 				throw new \Exception( 'Could not use TLS: ' . ldap_error( $this->conn ) );
 			}
 		}
@@ -57,6 +57,9 @@ class OpenLdapUserProvider implements UserProviderInterface {
 	}
 
 	public function retrieveByID($identifier) {
+		
+		file_put_contents( '/tmp/debug.txt', 'Identifier '.json_encode( $identifier ) . PHP_EOL );
+		
 		$filter = $this->config['filter'];
 		if(strpos( $filter, '&' ))
 			$filter = substr_replace( $filter, '(' . $this->config['user_id_attribute'] . '=' . $identifier . ')', 
@@ -87,6 +90,8 @@ class OpenLdapUserProvider implements UserProviderInterface {
 	}
 
 	public function retrieveByCredentials(array $credentials) {
+		file_put_contents( '/tmp/debug.txt', 'Credentials: '.json_encode( $credentials ) . PHP_EOL );
+		
 		$result = @ldap_search( $this->conn, 
 				$this->config['login_attribute'] . '=' . $credentials['username'] . ',' . $this->config['basedn'], 
 				$this->config['filter'] );
