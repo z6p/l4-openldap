@@ -77,7 +77,6 @@ class OpenLdapUserProvider implements UserProviderInterface {
 	}
 
 	public function retrieveByCredentials(array $credentials) {
-		$filter = array();
 		foreach( $credentials as $key => $value ) {
 			if($key !== 'password') {
 				$filter[] = '(' . $key . '=' . $value . ')';
@@ -88,6 +87,8 @@ class OpenLdapUserProvider implements UserProviderInterface {
 		} else {
 			$filter = implode( '', $filter );
 		}
+		
+		$filterConf = (isset( $this->config['filter'] )) ? '(&(' . $this->config['filter'] . ')' . $filter . ')' : $filter;
 		
 		$result = @ldap_search( $this->conn, $this->config['basedn'], $filter );
 		
