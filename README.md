@@ -10,6 +10,14 @@ Add the following to your `composer.json` file.
 require {
 	"z6p/laravel4-openldap": "dev-master"
 }
+
+
+"repositories": [
+	{
+    		"type": "vcs",
+   		 "url": "https://github.com/z6p/laravel4-openldap.git"
+	}
+]
 ```
 
 Run `composer update`.
