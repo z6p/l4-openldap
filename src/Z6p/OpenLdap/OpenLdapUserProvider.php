@@ -83,17 +83,21 @@ class OpenLdapUserProvider implements UserProviderInterface {
 				$filter[] = '(' . $key . '=' . $value . ')';
 			}
 		}
-		if(count( $filter ) > 0) {
+		if(count( $filter ) > 1) {
 			$filter = '(&' . implode( '', $filter ) . ')';
+		} else {
+			$filter = implode( '', $filter );
 		}
 		
-		$result = @ldap_search( $this->conn, $this->config['basedn'], $this->config['filter'] );
+		$result = @ldap_search( $this->conn, $this->config['basedn'], $filter );
+		
 		if($result == false) return null;
 		
 		$entries = ldap_get_entries( $this->conn, $result );
 		if($entries['count'] == 0 || $entries['count'] > 1) return null;
-		
+				
 		$this->model = $this->createGenericUserFromLdap( $entries[0] );
+		
 		return $this->model;
 	}
 
@@ -101,7 +105,7 @@ class OpenLdapUserProvider implements UserProviderInterface {
 		if($user == null) return false;
 		if(isset( $credentials['password'] ) == '') return false;
 		
-		$dn = '';
+		$dn = $user->id;
 		
 		if(!$result = @ldap_bind( $this->conn, $dn, $credentials['password'] )) return false;
 		
@@ -109,12 +113,20 @@ class OpenLdapUserProvider implements UserProviderInterface {
 	}
 
 	public function createGenericUserFromLdap($entry) {
-		$parameters = array(
-				'id' => $entry[$this->config['user_id_attribute']][0]
-		);
+		if(is_array( $entry[$this->config['user_id_attribute']] ))
+			$parameters = array(
+					'id' => $entry[$this->config['user_id_attribute']][0]
+			);
+		else
+			$parameters = array(
+					'id' => $entry[$this->config['user_id_attribute']]
+			);
 		
 		foreach( $this->config['user_attributes'] as $key => $value ) {
-			$parameters[$value] = $entry[$key][0];
+			if(is_array( $entry[$key] ))
+				$parameters[$value] = $entry[$key][0];
+			else
+				$parameters[$value] = $entry[$key];
 		}
 		
 		return new GenericUser( $parameters );
