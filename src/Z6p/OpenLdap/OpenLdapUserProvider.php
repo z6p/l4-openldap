@@ -106,14 +106,14 @@ class OpenLdapUserProvider implements UserProviderInterface {
 		if($user == null) return false;
 		if(isset( $credentials['password'] ) == '') return false;
 		
-		$dn = $user->id;
+		$dn = $user->dn;
 		
 		if(!$result = @ldap_bind( $this->conn, $dn, $credentials['password'] )) return false;
 		
 		return true;
 	}
 
-	public function createGenericUserFromLdap($entry) {
+	protected function createGenericUserFromLdap($entry) {
 		if(is_array( $entry[$this->config['user_id_attribute']] ))
 			$parameters = array(
 					'id' => $entry[$this->config['user_id_attribute']][0]
@@ -136,6 +136,8 @@ class OpenLdapUserProvider implements UserProviderInterface {
 					$parameters[$value] = $value;
 			}
 		}
+		
+		$parameters['dn'] = $entry['dn'];
 		
 		return new GenericUser( $parameters );
 	}
