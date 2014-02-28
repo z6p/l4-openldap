@@ -23,6 +23,12 @@ class OpenLdapUserProvider implements UserProviderInterface {
 	public function __construct($config) {
 		$this->config = $config;
 		
+		$this->justthese = array();
+		
+		foreach( $this->config['user_attributes'] as $key => $value ) {
+			$this->justthese[] = $key;
+		}
+		
 		if(!extension_loaded( 'ldap' )) throw new \Exception( "PHP LDAP extension not loaded." );
 		
 		if(!$this->conn = ldap_connect( "ldap://{$this->config['host']}" )) {
@@ -64,7 +70,7 @@ class OpenLdapUserProvider implements UserProviderInterface {
 		else
 			$filter = '(&(' . $this->config['user_id_attribute'] . '=' . $identifier . ')' . $filter . ')';
 		
-		$result = @ldap_search( $this->conn, $this->config['basedn'], $filter );
+		$result = @ldap_search( $this->conn, $this->config['basedn'], $filter, $this->justthese );
 		
 		if($result == false) return null;
 		
@@ -90,7 +96,7 @@ class OpenLdapUserProvider implements UserProviderInterface {
 		
 		$filterConf = (isset( $this->config['filter'] )) ? '(&(' . $this->config['filter'] . ')' . $filter . ')' : $filter;
 		
-		$result = @ldap_search( $this->conn, $this->config['basedn'], $filter );
+		$result = @ldap_search( $this->conn, $this->config['basedn'], $filter, $this->justthese );
 		
 		if($result == false) return null;
 		
@@ -123,18 +129,18 @@ class OpenLdapUserProvider implements UserProviderInterface {
 					'id' => $entry[$this->config['user_id_attribute']]
 			);
 		
-		if($this->config['user_attributes'] == '*') {
-			foreach( $entry as $key => $value ) {
-				$parameters[$key] = $value;
-			}
-		} else {
-			
-			foreach( $this->config['user_attributes'] as $key => $value ) {
-				if(is_array( $value ))
-					$parameters[$value] = $value[0];
-				else
-					$parameters[$value] = $value;
-			}
+		foreach( $this->config['user_attributes'] as $key => $value ) {
+			if(is_array( $entry[$key] )) {
+				if($entry[$key]['count'] <= 1) {
+					$parameters[$value] = $entry[$key][0];
+				} else {
+					$parameters[$value] = array();
+					for($i = 0; $i < $entry[$key]['count']; $i++) {
+						$parameters[$value][] = $entry[$key][$i];
+					}
+				}
+			} else
+				$parameters[$value] = $entry[$key];
 		}
 		
 		$parameters['dn'] = $entry['dn'];
