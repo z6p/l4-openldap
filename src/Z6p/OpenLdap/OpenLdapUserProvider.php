@@ -145,6 +145,6 @@ class OpenLdapUserProvider implements UserProviderInterface {
 		
 		$parameters['dn'] = $entry['dn'];
 		
-		return new GenericUser( $parameters );
+		return new OpenLdapUser( $parameters );
 	}
 }
