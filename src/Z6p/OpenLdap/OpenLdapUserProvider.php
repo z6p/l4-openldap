@@ -64,13 +64,19 @@ class OpenLdapUserProvider implements UserProviderInterface {
 
 	public function retrieveByID($identifier) {
 		$filter = OpenLdapFilter::parse( $this->config['filter'] );
-		$firstFilter = array_keys( $filter );
-		$filter = array(
-				'&' => array(
-						$firstFilter[0] => $filter[$firstFilter[0]],
-						$this->config['user_id_attribute'] => $identifier
-				)
-		);
+		if(count( $filter ) > 0) {
+			$firstFilter = array_keys( $filter );
+			$filter = array(
+					'&' => array(
+							$firstFilter[0] => $filter[$firstFilter[0]],
+							$this->config['user_id_attribute'] => $identifier
+					)
+			);
+		} else {
+			$filter = array(
+					$this->config['user_id_attribute'] => $identifier
+			);
+		}
 		$filter = OpenLdapFilter::toString( $filter );
 		
 		$result = @ldap_search( $this->conn, $this->config['basedn'], $filter, $this->justthese );
@@ -90,12 +96,19 @@ class OpenLdapUserProvider implements UserProviderInterface {
 		$firstFilter = array_keys( $filter );
 		foreach( $credentials as $key => $value ) {
 			if($key !== 'password') {
-				$filter = array(
-						'&' => array(
-								$firstFilter[0] => $filter[$firstFilter[0]],
-								$key => $value
-						)
-				);
+				if(count( $filter ) > 0) {
+					$firstFilter = array_keys( $filter );
+					$filter = array(
+							'&' => array(
+									$firstFilter[0] => $filter[$firstFilter[0]],
+									$this->config['user_id_attribute'] => $identifier
+							)
+					);
+				} else {
+					$filter = array(
+							$this->config['user_id_attribute'] => $identifier
+					);
+				}
 			}
 		}
 		$filter = OpenLdapFilter::toString( $filter );
