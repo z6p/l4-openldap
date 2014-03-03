@@ -101,12 +101,12 @@ class OpenLdapUserProvider implements UserProviderInterface {
 					$filter = array(
 							'&' => array(
 									$firstFilter[0] => $filter[$firstFilter[0]],
-									$this->config['user_id_attribute'] => $identifier
+									$key => $value
 							)
 					);
 				} else {
 					$filter = array(
-							$this->config['user_id_attribute'] => $identifier
+							$key => $value
 					);
 				}
 			}
