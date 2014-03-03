@@ -1,4 +1,5 @@
 <?php
+
 namespace Z6p\OpenLdap;
 
 class OpenLdapFilter {
@@ -22,7 +23,9 @@ class OpenLdapFilter {
 			$values = explode( ')(', trim( $filterPart, '()' ) );
 			foreach( $values as $value ) {
 				$valuesParts = explode( '=', $value );
-				$ret[$valuesParts[0]] = $valuesParts[1];
+				if(count( $valuesParts ) == 2) {
+					$ret[$valuesParts[0]] = $valuesParts[1];
+				}
 			}
 			return $ret;
 		}
